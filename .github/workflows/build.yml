@@ -21,8 +21,7 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      # Ensure Gradle is available (if not preinstalled)
-      - name: Install Gradle
+      - name: Install Gradle (if missing)
         run: |
           if ! command -v gradle >/dev/null 2>&1; then
             sudo apt-get update
