@@ -21,12 +21,12 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Gradle (if missing)
+      - name: Install Gradle 8.7
         run: |
-          if ! command -v gradle >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y gradle
-          fi
+          GRADLE_VERSION=8.7
+          wget -q "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
+          unzip -q "gradle-${GRADLE_VERSION}-bin.zip"
+          echo "${PWD}/gradle-${GRADLE_VERSION}/bin" >> $GITHUB_PATH
           gradle -v
 
       - name: Build debug APK
