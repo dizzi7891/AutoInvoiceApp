@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define our own theme so the Manifest doesn't depend on a library style name -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- You can customize colors if you like -->
+    </style>
+</resources>
