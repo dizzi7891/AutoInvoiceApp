@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bakers.autoinvoice">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:label="AutoInvoice"
+    <application
+        android:label="AutoInvoice"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar">
         <activity android:name=".MainActivity">
             <intent-filter>
