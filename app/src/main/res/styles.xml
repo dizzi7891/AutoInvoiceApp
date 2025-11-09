@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Your app’s theme -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight">
+        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:navigationBarColor">@color/purple_700</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+</resources>
