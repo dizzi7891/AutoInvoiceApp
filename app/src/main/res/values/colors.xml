@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Required launcher icon colors -->
+    <!-- For adaptive launcher xmls -->
     <color name="ic_launcher_background">#121212</color>
     <color name="ic_launcher_fg">#FFFFFFFF</color>
-
-    <!-- App color palette -->
-    <color name="colorPrimary">#6750A4</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorPrimaryContainer">#EADDFF</color>
-    <color name="colorOnPrimaryContainer">#21005E</color>
-
-    <color name="colorSecondary">#625B71</color>
-    <color name="colorOnSecondary">#FFFFFF</color>
-
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="colorOnBackground">#1C1B1F</color>
-
 </resources>
