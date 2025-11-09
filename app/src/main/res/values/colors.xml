@@ -1,9 +1,15 @@
 <resources>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- Material baseline colors that other resources expect -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Launcher icon colors -->
+    <color name="ic_launcher_background">@color/white</color>
     <color name="ic_launcher_fg">#000000</color>
 
     <!-- App theme colors (safe defaults) -->
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryVariant">#3700B3</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimary">@color/purple_500</color>
+    <color name="colorPrimaryVariant">@color/purple_700</color>
+    <color name="colorOnPrimary">@color/white</color>
 </resources>
