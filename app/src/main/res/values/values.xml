@@ -1,7 +1,4 @@
 <resources>
-    <!-- Keep this minimal. No old Material2 theme attrs here. -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-
-    <string name="app_name">AutoInvoice</string>
 </resources>
