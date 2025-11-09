@@ -1,4 +1,6 @@
 <resources>
-    <!-- Light/default theme -->
-    <style name="Theme.AutoInvoice" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    <!-- Single source of truth for your app theme -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- keep this empty for now; we can customize later -->
+    </style>
 </resources>
