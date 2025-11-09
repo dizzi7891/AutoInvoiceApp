@@ -1,3 +1,5 @@
 <resources>
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Customize your dark theme here -->
+    </style>
 </resources>
