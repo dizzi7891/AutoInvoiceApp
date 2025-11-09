@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Define our own theme so the Manifest doesn't depend on a library style name -->
+    <!-- Main app theme (NO ACTION BAR, Material 3) -->
     <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- You can customize colors if you like -->
+        <!-- Customize your app theme colors -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 </resources>
