@@ -1,7 +1,5 @@
 <resources>
-    <!-- Light theme -->
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.Light">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight">
+        <!-- No old attributes! Material3 handles everything automatically -->
     </style>
 </resources>
