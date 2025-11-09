@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Main app theme (NO ACTION BAR, Material 3) -->
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your app theme colors -->
+    <!-- Safe theme that always exists for XML views -->
+    <style name="Theme.AutoInvoice" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
