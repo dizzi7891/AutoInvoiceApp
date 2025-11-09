@@ -1,9 +1,8 @@
 <resources>
-    <!-- Main app theme (No Action Bar, Material Components M2) -->
-    <style name="Theme.AutoInvoice" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary palette -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+
+    <!-- Base application theme using Material 3 -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your M3 colors here if needed -->
     </style>
+
 </resources>
