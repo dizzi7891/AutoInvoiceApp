@@ -3,10 +3,18 @@
 
     <!-- Required launcher icon colors -->
     <color name="ic_launcher_background">#121212</color>
-    <color name="ic_launcher_fg">#FFFFFF</color>
+    <color name="ic_launcher_fg">#FFFFFFFF</color>
 
-    <!-- Minimal safe colors that do NOT conflict with Material 3 -->
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
+    <!-- App color palette -->
+    <color name="colorPrimary">#6750A4</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#EADDFF</color>
+    <color name="colorOnPrimaryContainer">#21005E</color>
+
+    <color name="colorSecondary">#625B71</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorOnBackground">#1C1B1F</color>
 
 </resources>
