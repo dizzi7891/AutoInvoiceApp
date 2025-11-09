@@ -1,5 +1,4 @@
 <resources>
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight">
-        <!-- No old attributes! Material3 handles everything automatically -->
-    </style>
+    <!-- Light/default theme -->
+    <style name="Theme.AutoInvoice" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>
