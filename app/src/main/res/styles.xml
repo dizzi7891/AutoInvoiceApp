@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Your app’s theme -->
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight">
-        <item name="android:statusBarColor">@color/purple_700</item>
-        <item name="android:navigationBarColor">@color/purple_700</item>
-        <item name="android:background">@color/white</item>
+    <!-- Main App Theme (Material3, No ActionBar) -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize primary colors -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
 </resources>
