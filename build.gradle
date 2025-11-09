@@ -1,4 +1,0 @@
-// Root build.gradle — intentionally minimal (no repositories here)
-tasks.register("clean", Delete) {
-    delete(rootProject.buildDir)
-}
