@@ -1,5 +1,7 @@
 <resources>
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Customize your dark theme here -->
+    <!-- Dark theme -->
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.Dark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>
