@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here -->
     </style>
 </resources>
