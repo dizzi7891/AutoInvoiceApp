@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : ComponentActivity() {
@@ -152,8 +153,7 @@ fun NewInvoiceScreen(
     }
     val taxable = remember(parts, labor) { (parts + labor).setScale(2, RoundingMode.HALF_UP) }
     val tax = remember(invoice, taxable) {
-        taxable.multiply(invoice.taxPercent).divide(BigDecimal("100"))
-            .setScale(2, RoundingMode.HALF_UP)
+        taxable.multiply(invoice.taxPercent).divide(BigDecimal("100")).setScale(2, RoundingMode.HALF_UP)
     }
     val grand = remember(taxable, tax) { (taxable + tax).setScale(2, RoundingMode.HALF_UP) }
 
@@ -174,7 +174,11 @@ fun NewInvoiceScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text("Invoice # ${invoice.number}", fontWeight = FontWeight.SemiBold)
                 OutlinedButton(onClick = onBack) { Text("Back") }
             }
@@ -245,9 +249,24 @@ fun NewInvoiceScreen(
         item { SectionTitle("Labor") }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MoneyField("Labor Rate (per hr)", invoice.laborRate) { v -> update { laborRate = v } }
-                DecimalField("Hours", invoice.laborHours) { v -> update { laborHours = v } }
-                PercentField("Tax %", invoice.taxPercent) { v -> update { taxPercent = v } }
+                MoneyField(
+                    label = "Labor Rate (per hr)",
+                    value = invoice.laborRate,
+                    onChange = { v -> update { laborRate = v } },
+                    modifier = Modifier.weight(1f)
+                )
+                DecimalField(
+                    label = "Hours",
+                    value = invoice.laborHours,
+                    onChange = { v -> update { laborHours = v } },
+                    modifier = Modifier.weight(1f)
+                )
+                PercentField(
+                    label = "Tax %",
+                    value = invoice.taxPercent,
+                    onChange = { v -> update { taxPercent = v } },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
@@ -263,8 +282,18 @@ fun NewInvoiceScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        DecimalField("Qty", li.qty) { v -> update { items[idx] = items[idx].copy(qty = v) } }
-                        MoneyField("Unit", li.unit) { v -> update { items[idx] = items[idx].copy(unit = v) } }
+                        DecimalField(
+                            label = "Qty",
+                            value = li.qty,
+                            onChange = { v -> update { items[idx] = items[idx].copy(qty = v) } },
+                            modifier = Modifier.weight(1f)
+                        )
+                        MoneyField(
+                            label = "Unit",
+                            value = li.unit,
+                            onChange = { v -> update { items[idx] = items[idx].copy(unit = v) } },
+                            modifier = Modifier.weight(1f)
+                        )
                         Text(
                             "Line: ${(li.qty.multiply(li.unit)).setScale(2, RoundingMode.HALF_UP).money()}",
                             modifier = Modifier.align(Alignment.CenterVertically)
@@ -272,20 +301,17 @@ fun NewInvoiceScreen(
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                         TextButton(
-                            onClick = {
-                                update {
-                                    if (items.size > 1) items.removeAt(idx)
-                                }
-                            }
+                            onClick = { update { if (items.size > 1) items.removeAt(idx) } }
                         ) { Text("Remove") }
                     }
                 }
             }
         }
         item {
-            OutlinedButton(onClick = { update { items.add(LineItem()) } }, modifier = Modifier.fillMaxWidth()) {
-                Text("Add Line Item")
-            }
+            OutlinedButton(
+                onClick = { update { items.add(LineItem()) } },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Add Line Item") }
         }
 
         // Totals + Save
@@ -304,7 +330,8 @@ fun NewInvoiceScreen(
                     }
                     Divider()
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Grand Total", fontWeight = FontWeight.Bold); Text(grand.money(), fontWeight = FontWeight.Bold)
+                        Text("Grand Total", fontWeight = FontWeight.Bold)
+                        Text(grand.money(), fontWeight = FontWeight.Bold)
                     }
                     Button(
                         onClick = {
@@ -328,7 +355,12 @@ private fun SectionTitle(text: String) {
 }
 
 @Composable
-private fun DecimalField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
+private fun DecimalField(
+    label: String,
+    value: BigDecimal,
+    onChange: (BigDecimal) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var t by remember(value) { mutableStateOf(value.stripTrailingZeros().toPlainString()) }
     OutlinedTextField(
         value = t,
@@ -338,12 +370,17 @@ private fun DecimalField(label: String, value: BigDecimal, onChange: (BigDecimal
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = modifier
     )
 }
 
 @Composable
-private fun MoneyField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
+private fun MoneyField(
+    label: String,
+    value: BigDecimal,
+    onChange: (BigDecimal) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var t by remember(value) { mutableStateOf(value.setScale(2, RoundingMode.HALF_UP).toPlainString()) }
     OutlinedTextField(
         value = t,
@@ -353,12 +390,17 @@ private fun MoneyField(label: String, value: BigDecimal, onChange: (BigDecimal) 
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = modifier
     )
 }
 
 @Composable
-private fun PercentField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
+private fun PercentField(
+    label: String,
+    value: BigDecimal,
+    onChange: (BigDecimal) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var t by remember(value) { mutableStateOf(value.stripTrailingZeros().toPlainString()) }
     OutlinedTextField(
         value = t,
@@ -368,6 +410,6 @@ private fun PercentField(label: String, value: BigDecimal, onChange: (BigDecimal
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = modifier
     )
 }
