@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Safe theme that always exists for XML views -->
-    <style name="Theme.AutoInvoice" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Your app colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
     </style>
+
 </resources>
