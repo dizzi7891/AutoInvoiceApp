@@ -1,5 +1,4 @@
 name: Build Debug APK
-
 on:
   push:
     branches: [ main ]
@@ -8,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,7 +20,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      # If wrapper is missing, create it using system Gradle 8.9
       - name: Generate Gradle Wrapper (8.9) if missing
         run: |
           if [ ! -f gradlew ]; then
