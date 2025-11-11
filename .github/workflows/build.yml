@@ -20,25 +20,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # 1) Use the Gradle action (no wrapper needed) to GENERATE the wrapper files
+      # Use Gradle action (provides Gradle; no wrapper needed)
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Generate Gradle Wrapper (8.9) if missing
-        run: |
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Wrapper missing; generating…"
-            gradle wrapper --gradle-version 8.9
-          else
-            echo "Wrapper present."
-          fi
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      # 2) Build using the wrapper from now on
-      - name: Build Debug APK
-        run: ./gradlew --no-daemon clean assembleDebug
+      - name: Build Debug APK (no wrapper)
+        run: gradle --no-daemon clean assembleDebug
 
       - name: Upload APK
         if: success()
