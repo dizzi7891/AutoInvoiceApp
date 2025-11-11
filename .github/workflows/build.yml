@@ -1,13 +1,14 @@
-name: Build debug APK
+name: Build Debug APK
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,25 +19,22 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      # Install Gradle 8.9 for this run (no wrapper script needed)
-      - name: Set up Gradle 8.9
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Build Debug APK
+      # If wrapper is missing, create it using system Gradle 8.9
+      - name: Generate Gradle Wrapper (8.9) if missing
         run: |
-          # Prefer wrapper if you later add gradlew; otherwise fall back to system gradle
-          if [ -x "./gradlew" ]; then
-            ./gradlew --version
-            ./gradlew :app:assembleDebug
-          else
-            gradle --version
-            gradle :app:assembleDebug
+          if [ ! -f gradlew ]; then
+            gradle wrapper --gradle-version 8.9
+            chmod +x gradlew
           fi
+
+      - name: Build debug
+        run: ./gradlew --no-daemon clean assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: AutoInvoiceApp-debug
+          name: app-debug
           path: app/build/outputs/apk/debug/*.apk
