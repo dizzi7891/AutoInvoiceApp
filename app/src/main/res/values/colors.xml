@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Optional color tokens used by older code; harmless to keep -->
     <color name="ic_launcher_background">#121212</color>
     <color name="ic_launcher_fg">#FFFFFFFF</color>
-
-    <!-- Simple palette (not required by Material3, but safe) -->
-    <color name="colorPrimary">#6750A4</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorPrimaryContainer">#EADDFF</color>
-    <color name="colorOnPrimaryContainer">#21005E</color>
-    <color name="colorSecondary">#625B71</color>
-    <color name="colorOnSecondary">#FFFFFF</color>
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="colorOnBackground">#1C1B1F</color>
 </resources>
