@@ -1,4 +1,5 @@
 name: Build Debug APK
+
 on:
   push:
     branches: [ main ]
@@ -7,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,14 +22,10 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Generate Gradle Wrapper (8.9) if missing
-        run: |
-          if [ ! -f gradlew ]; then
-            gradle wrapper --gradle-version 8.9
-            chmod +x gradlew
-          fi
+      # ❌ REMOVED the wrapper regeneration step
+      # ✔️ Your repo already contains gradlew + wrapper
 
-      - name: Build debug
+      - name: Build Debug APK
         run: ./gradlew --no-daemon clean assembleDebug
 
       - name: Upload APK
