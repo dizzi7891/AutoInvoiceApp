@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Your app theme simply inherits a valid Material3 theme -->
+    <!-- XML Material3 theme from Material Components -->
     <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- These are optional; you can keep or remove. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
-
 </resources>
