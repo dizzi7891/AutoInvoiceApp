@@ -27,21 +27,22 @@ android {
         viewBinding false
     }
 
+    // Compose Compiler aligned with Kotlin 1.9.25
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15" // Kotlin 1.9.25 compatible
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
     kotlinOptions {
         jvmTarget = '17'
     }
 }
 
 dependencies {
+    // Compose BOM (keeps compose libs in sync)
     implementation platform("androidx.compose:compose-bom:2024.10.01")
     androidTestImplementation platform("androidx.compose:compose-bom:2024.10.01")
 
@@ -51,14 +52,20 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling"
     implementation "androidx.compose.foundation:foundation"
     implementation "androidx.compose.runtime:runtime"
-
     implementation "androidx.compose.material3:material3"
 
+    // XML Material theme provider (fixes Theme.Material3.* in themes.xml)
+    implementation "com.google.android.material:material:1.12.0"
+
+    // AndroidX basics
     implementation "androidx.core:core-ktx:1.13.1"
     implementation "androidx.appcompat:appcompat:1.7.0"
 
-    // This is the key bit that fixes the 'Theme.Material3.DayNight...' XML error
-    implementation "com.google.android.material:material:1.12.0"
-
+    // Kotlin stdlib (matches plugin)
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.25"
+
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.2.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
 }
