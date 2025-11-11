@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.bakers.autoinvoice
 
 import android.os.Bundle
@@ -71,22 +73,13 @@ fun AutoInvoiceApp() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
-                        Text(
-                            when (screen) {
-                                Screen.HOME -> "AutoInvoice"
-                                Screen.NEW -> "New Invoice"
-                            }
-                        )
-                    }
+                    title = { Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice") }
                 )
             }
         ) { inner ->
             Box(Modifier.padding(inner)) {
                 when (screen) {
-                    Screen.HOME -> HomeScreen(
-                        onNew = { current = Invoice(); screen = Screen.NEW }
-                    )
+                    Screen.HOME -> HomeScreen(onNew = { current = Invoice(); screen = Screen.NEW })
                     Screen.NEW -> NewInvoiceScreen(
                         invoice = current,
                         onUpdate = { current = it },
@@ -207,19 +200,19 @@ private fun NewInvoiceScreen(
                     onValueChange = { update { vehicle = vehicle.copy(year = it) } },
                     label = { Text("Year") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.widthIn(min = 100.dp).weightFill()
                 )
                 OutlinedTextField(
                     value = invoice.vehicle.make,
                     onValueChange = { update { vehicle = vehicle.copy(make = it) } },
                     label = { Text("Make") },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.widthIn(min = 100.dp).weightFill()
                 )
                 OutlinedTextField(
                     value = invoice.vehicle.model,
                     onValueChange = { update { vehicle = vehicle.copy(model = it) } },
                     label = { Text("Model") },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.widthIn(min = 100.dp).weightFill()
                 )
             }
         }
@@ -324,7 +317,7 @@ private fun DecimalField(label: String, value: BigDecimal, onChange: (BigDecimal
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.widthIn(min = 120.dp).fillMaxWidth()
     )
 }
 
@@ -339,7 +332,7 @@ private fun MoneyField(label: String, value: BigDecimal, onChange: (BigDecimal) 
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.widthIn(min = 120.dp).fillMaxWidth()
     )
 }
 
@@ -354,6 +347,14 @@ private fun PercentField(label: String, value: BigDecimal, onChange: (BigDecimal
         },
         label = { Text(label) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = Modifier.weight(1f)
+        modifier = Modifier.widthIn(min = 120.dp).fillMaxWidth()
     )
 }
+
+/* --------------------- Small helper -------------------------- */
+
+/**
+ * A tiny helper so we don’t need RowScope.weight imports.
+ * It just returns fillMaxWidth() to keep layout simple on small screens.
+ */
+private fun Modifier.weightFill(): Modifier = this.fillMaxWidth()
