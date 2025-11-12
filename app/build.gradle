@@ -1,30 +1,56 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+}
+
 android {
-  compileSdk 34
-  defaultConfig {
-    minSdk 24
-    targetSdk 34
-  }
-  buildFeatures { compose true }
-  composeOptions {
-    // Works with Kotlin 1.9.25
-    kotlinCompilerExtensionVersion = "1.5.15"
-  }
-  kotlinOptions { jvmTarget = '17' }
+    namespace "com.bakers.autoinvoice"
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.bakers.autoinvoice"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        // Works with Kotlin 1.9.25
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
-  // Compose BOM keeps versions in sync
-  implementation platform("androidx.compose:compose-bom:2024.10.01")
+    // Keep Compose artifacts in sync
+    implementation platform("androidx.compose:compose-bom:2024.10.01")
 
-  implementation "androidx.activity:activity-compose:1.9.3"
-  implementation "androidx.compose.ui:ui"
-  implementation "androidx.compose.ui:ui-tooling-preview"
-  debugImplementation "androidx.compose.ui:ui-tooling"
+    implementation "androidx.activity:activity-compose:1.9.3"
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    debugImplementation "androidx.compose.ui:ui-tooling"
 
-  // **Material 3** (required for SmallTopAppBar/TopAppBar)
-  implementation "androidx.compose.material3:material3"
+    implementation "androidx.compose.material3:material3"
+    implementation "androidx.compose.foundation:foundation"
 
-  implementation "androidx.compose.foundation:foundation"
-  implementation "androidx.core:core-ktx:1.13.1"
-  implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
 }
