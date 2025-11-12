@@ -1,4 +1,3 @@
-import androidx.compose.material3.SmallTopAppBar
 package com.bakers.autoinvoice
 
 import android.os.Bundle
@@ -8,15 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-// Optional future imports if/when you use them:
-// import androidx.compose.foundation.layout.weight
-// import androidx.compose.ui.text.input.KeyboardOptions
-
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
@@ -44,7 +38,6 @@ data class Invoice(
     var items: MutableList<LineItem> = mutableListOf(LineItem())
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoInvoiceApp() {
     var screen by remember { mutableStateOf(Screen.HOME) }
@@ -52,7 +45,13 @@ fun AutoInvoiceApp() {
 
     MaterialTheme {
         Scaffold(
-            topBar = { SmallTopAppBar(title = { Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice") }) }
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice")
+                    }
+                )
+            }
         ) { inner ->
             Box(Modifier.padding(inner)) {
                 when (screen) {
