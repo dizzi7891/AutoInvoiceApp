@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ data class Invoice(
     var items: MutableList<LineItem> = mutableListOf(LineItem())
 )
 
+@OptIn(ExperimentalMaterial3Api::class) // <-- Opt in to M3 experimental APIs used by TopAppBar/Scaffold
 @Composable
 fun AutoInvoiceApp() {
     var screen by remember { mutableStateOf(Screen.HOME) }
@@ -47,16 +49,14 @@ fun AutoInvoiceApp() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
-                        Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice")
-                    }
+                    title = { Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice") }
                 )
             }
         ) { inner ->
             Box(Modifier.padding(inner)) {
                 when (screen) {
                     Screen.HOME -> HomeScreen(onNew = { inv = Invoice(); screen = Screen.NEW })
-                    Screen.NEW -> NewInvoiceScreen(invoice = inv, onUpdate = { inv = it }, onBack = { screen = Screen.HOME })
+                    Screen.NEW  -> NewInvoiceScreen(invoice = inv, onUpdate = { inv = it }, onBack = { screen = Screen.HOME })
                 }
             }
         }
@@ -116,10 +116,10 @@ private fun NewInvoiceScreen(invoice: Invoice, onUpdate: (Invoice) -> Unit, onBa
         item { Text("Vehicle", style = MaterialTheme.typography.titleMedium) }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(invoice.vehicle.year, { update { vehicle = vehicle.copy(year = it) } }, label = { Text("Year") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.vehicle.make, { update { vehicle = vehicle.copy(make = it) } }, label = { Text("Make") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(invoice.vehicle.year,  { update { vehicle = vehicle.copy(year  = it) } }, label = { Text("Year")  }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(invoice.vehicle.make,  { update { vehicle = vehicle.copy(make  = it) } }, label = { Text("Make")  }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(invoice.vehicle.model, { update { vehicle = vehicle.copy(model = it) } }, label = { Text("Model") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.vehicle.vin, { update { vehicle = vehicle.copy(vin = it.uppercase(Locale.US)) } }, label = { Text("VIN") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(invoice.vehicle.vin,   { update { vehicle = vehicle.copy(vin   = it.uppercase(Locale.US)) } }, label = { Text("VIN")   }, modifier = Modifier.fillMaxWidth())
             }
         }
 
@@ -128,8 +128,8 @@ private fun NewInvoiceScreen(invoice: Invoice, onUpdate: (Invoice) -> Unit, onBa
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 MoneyField("Rate/hr", invoice.laborRate) { v -> update { laborRate = v } }
-                DecimalField("Hours", invoice.laborHours) { v -> update { laborHours = v } }
-                PercentField("Tax %", invoice.taxPercent) { v -> update { taxPercent = v } }
+                DecimalField("Hours",  invoice.laborHours) { v -> update { laborHours = v } }
+                PercentField("Tax %",  invoice.taxPercent) { v -> update { taxPercent = v } }
             }
         }
 
@@ -140,8 +140,8 @@ private fun NewInvoiceScreen(invoice: Invoice, onUpdate: (Invoice) -> Unit, onBa
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(li.description, { v -> update { items[idx] = items[idx].copy(description = v) } }, label = { Text("Description") }, modifier = Modifier.fillMaxWidth())
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        DecimalField("Qty", li.qty) { v -> update { items[idx] = items[idx].copy(qty = v) } }
-                        MoneyField("Unit", li.unit) { v -> update { items[idx] = items[idx].copy(unit = v) } }
+                        DecimalField("Qty",  li.qty)  { v -> update { items[idx] = items[idx].copy(qty  = v) } }
+                        MoneyField("Unit",   li.unit) { v -> update { items[idx] = items[idx].copy(unit = v) } }
                         Text("Line: ${li.qty.multiply(li.unit).setScale(2, RoundingMode.HALF_UP).money()}")
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
