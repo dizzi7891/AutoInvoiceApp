@@ -22,11 +22,17 @@ jobs:
         java-version: 17
         distribution: temurin
 
+    - name: Download Gradle 8.7
+      run: |
+        curl -L https://services.gradle.org/distributions/gradle-8.7-bin.zip -o gradle.zip
+        unzip gradle.zip
+        mv gradle-8.7 gradle-dist
+
     - name: Remove old wrapper
       run: rm -rf gradle/wrapper gradlew gradlew.bat
 
-    - name: Generate new Gradle wrapper (8.7)
-      run: ./gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
+    - name: Generate new wrapper
+      run: ./gradle-dist/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
 
     - name: Commit wrapper files
       run: |
