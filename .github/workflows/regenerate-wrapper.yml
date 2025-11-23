@@ -1,0 +1,32 @@
+name: Regenerate Gradle Wrapper
+
+on:
+  workflow_dispatch:
+
+jobs:
+  regen-wrapper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Regenerate Gradle Wrapper
+        run: |
+          rm -rf gradle/wrapper
+          mkdir -p gradle/wrapper
+          ./gradlew wrapper --gradle-version 8.7
+
+      - name: Commit wrapper files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add gradle/wrapper
+          git commit -m "Regenerated Gradle Wrapper" || echo "No changes"
+          git push
