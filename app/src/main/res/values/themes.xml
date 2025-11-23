@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App theme inheriting from Material3 View theme so the manifest can resolve it -->
+
+    <!-- Stable Material 3 Theme (No Experimental APIs) -->
     <style name="Theme.AutoInvoice" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Optional UI tweaks -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/black</item>
     </style>
+
 </resources>
