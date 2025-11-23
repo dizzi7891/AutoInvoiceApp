@@ -1,4 +1,4 @@
-name: Regen Gradle Wrapper
+name: Regenerate Gradle Wrapper
 
 on:
   workflow_dispatch:
@@ -25,20 +25,25 @@ jobs:
     - name: Download Gradle 8.7
       run: |
         curl -L https://services.gradle.org/distributions/gradle-8.7-bin.zip -o gradle.zip
-        unzip gradle.zip
-        mv gradle-8.7 gradle-dist
+        unzip gradle.zip -d gradle-temp
 
-    - name: Remove old wrapper
-      run: rm -rf gradle/wrapper gradlew gradlew.bat
+    - name: Remove old wrapper files
+      run: |
+        rm -rf gradle/wrapper
+        rm -f gradlew gradlew.bat
 
-    - name: Generate new wrapper
-      run: ./gradle-dist/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
+    - name: Generate wrapper
+      run: |
+        gradle-temp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
 
-    - name: Commit wrapper files
+    - name: Clean up temporary Gradle download
+      run: rm -rf gradle-temp gradle.zip
+
+    - name: Commit wrapper only
       run: |
         git config user.email "github-actions@github.com"
         git config user.name "github-actions"
-        git add .
+        git add gradle/wrapper gradlew gradlew.bat
         git commit -m "Regenerate Gradle wrapper 8.7" || echo "No changes to commit"
 
     - name: Push changes
