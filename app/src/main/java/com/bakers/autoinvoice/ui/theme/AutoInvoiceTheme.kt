@@ -1,27 +1,33 @@
 package com.bakers.autoinvoice.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
+private val DarkColors = darkColorScheme(
+    primary = Maroon,
+    secondary = MaroonLight,
+    tertiary = AccentGold
+)
+
 private val LightColors = lightColorScheme(
-    primary = androidx.compose.ui.graphics.Color(0xFFB80000),
-    onPrimary = androidx.compose.ui.graphics.Color.White,
-    primaryContainer = androidx.compose.ui.graphics.Color(0xFFFFCDD2),
-    onPrimaryContainer = androidx.compose.ui.graphics.Color(0xFF410000),
-    secondary = androidx.compose.ui.graphics.Color.Black,
-    onSecondary = androidx.compose.ui.graphics.Color.White,
-    background = androidx.compose.ui.graphics.Color(0xFFFFF2F2),
-    onBackground = androidx.compose.ui.graphics.Color(0xFF1A1A1A),
-    surface = androidx.compose.ui.graphics.Color.White,
-    onSurface = androidx.compose.ui.graphics.Color(0xFF1A1A1A)
+    primary = Maroon,
+    secondary = MaroonLight,
+    tertiary = AccentGold
 )
 
 @Composable
-fun AutoInvoiceTheme(content: @Composable () -> Unit) {
+fun AutoInvoiceTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colors = if (darkTheme) DarkColors else LightColors
+
     MaterialTheme(
-        colorScheme = LightColors,
-        typography = MaterialTheme.typography,
+        colorScheme = colors,
+        typography = Typography,
         content = content
     )
 }
