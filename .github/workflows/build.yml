@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx1024m"
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -26,7 +29,7 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build Debug APK
-      run: ./gradlew --no-daemon clean assembleDebug
+      run: ./gradlew clean assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
