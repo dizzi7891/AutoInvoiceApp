@@ -4,29 +4,34 @@ on:
   workflow_dispatch:
 
 jobs:
-  regen-wrapper:
+  regenerate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install JDK
-        uses: actions/setup-java@v4
+      - name: Force remove old wrapper (ignore permissions)
+        run: |
+          sudo rm -f gradlew
+          sudo rm -f gradlew.bat
+          sudo rm -rf gradle/wrapper
+
+      - name: Create wrapper directory
+        run: mkdir -p gradle/wrapper
+
+      - name: Generate new Gradle wrapper
+        run: |
+          gradle wrapper --gradle-version 8.7
+
+      - name: Fix permissions
+        run: chmod +x gradlew
+
+      - name: Commit regenerated wrapper
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Regenerate Gradle Wrapper
-        run: |
-          rm -rf gradle/wrapper
-          mkdir -p gradle/wrapper
-          ./gradlew wrapper --gradle-version 8.7
-
-      - name: Commit wrapper files
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add gradle/wrapper
-          git commit -m "Regenerated Gradle Wrapper" || echo "No changes"
-          git push
+          commit_message: "Regenerated Gradle wrapper (fixed permissions)"
+          file_pattern: |
+            gradlew
+            gradlew.bat
+            gradle/wrapper/*
