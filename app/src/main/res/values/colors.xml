@@ -1,5 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#121212</color>
-    <color name="ic_launcher_fg">#FFFFFFFF</color>
+    <color name="md_theme_primary">#B80000</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#FFCDD2</color>
+    <color name="md_theme_onPrimaryContainer">#410000</color>
+
+    <color name="md_theme_secondary">#000000</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+
+    <color name="md_theme_background">#FFF2F2</color>
+    <color name="md_theme_onBackground">#1A1A1A</color>
+
+    <color name="md_theme_surface">#FFFFFF</color>
+    <color name="md_theme_onSurface">#1A1A1A</color>
 </resources>
