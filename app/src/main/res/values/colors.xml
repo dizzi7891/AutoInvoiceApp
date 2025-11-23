@@ -1,15 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="md_theme_primary">#B80000</color>
-    <color name="md_theme_onPrimary">#FFFFFF</color>
-    <color name="md_theme_primaryContainer">#FFCDD2</color>
-    <color name="md_theme_onPrimaryContainer">#410000</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="ic_launcher_fg">#000000</color>
 
-    <color name="md_theme_secondary">#000000</color>
-    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <!-- Your app theme colors -->
+    <color name="md_theme_light_primary">#6750A4</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#EADDFF</color>
+    <color name="md_theme_light_onPrimaryContainer">#21005D</color>
 
-    <color name="md_theme_background">#FFF2F2</color>
-    <color name="md_theme_onBackground">#1A1A1A</color>
-
-    <color name="md_theme_surface">#FFFFFF</color>
-    <color name="md_theme_onSurface">#1A1A1A</color>
+    <color name="md_theme_dark_primary">#D0BCFF</color>
+    <color name="md_theme_dark_onPrimary">#371E73</color>
+    <color name="md_theme_dark_primaryContainer">#4F378B</color>
+    <color name="md_theme_dark_onPrimaryContainer">#EADDFF</color>
 </resources>
