@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,44 @@ import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.Locale
 
+// ---------------------------------------------------------
+// DATA MODELS
+// ---------------------------------------------------------
+data class Customer(
+    var name: String = "",
+    var phone: String = "",
+    var email: String = ""
+)
+
+data class Vehicle(
+    var year: String = "",
+    var make: String = "",
+    var model: String = "",
+    var vin: String = ""
+)
+
+data class LineItem(
+    var description: String = "",
+    var qty: BigDecimal = BigDecimal.ONE,
+    var unit: BigDecimal = BigDecimal.ZERO
+)
+
+data class Invoice(
+    var number: String = java.text.SimpleDateFormat(
+        "yyyyMMdd-HHmm", Locale.getDefault()
+    ).format(java.util.Date()),
+    var customer: Customer = Customer(),
+    var vehicle: Vehicle = Vehicle(),
+    var laborHours: BigDecimal = BigDecimal.ZERO,
+    var laborRate: BigDecimal = BigDecimal("150.00"),   // FIXED RATE
+    var taxPercentPartsOnly: BigDecimal = BigDecimal("6.00"), // FIXED 6%
+    val shopFee: BigDecimal = BigDecimal("5.00"),       // FIXED SHOP FEE
+    var items: MutableList<LineItem> = mutableListOf(LineItem())
+)
+
+// ---------------------------------------------------------
+// MAIN ACTIVITY
+// ---------------------------------------------------------
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,177 +63,328 @@ class MainActivity : ComponentActivity() {
 
 private enum class Screen { HOME, NEW }
 
-data class Customer(var name: String = "", var phone: String = "", var email: String = "")
-data class Vehicle(var year: String = "", var make: String = "", var model: String = "", var vin: String = "")
-data class LineItem(var description: String = "", var qty: BigDecimal = BigDecimal.ONE, var unit: BigDecimal = BigDecimal.ZERO)
-data class Invoice(
-    var number: String = java.text.SimpleDateFormat("yyyyMMdd-HHmm", Locale.getDefault()).format(java.util.Date()),
-    var customer: Customer = Customer(),
-    var vehicle: Vehicle = Vehicle(),
-    var laborHours: BigDecimal = BigDecimal.ZERO,
-    var laborRate: BigDecimal = BigDecimal("110.00"),
-    var taxPercent: BigDecimal = BigDecimal("6.00"),
-    var items: MutableList<LineItem> = mutableListOf(LineItem())
-)
-
-@OptIn(ExperimentalMaterial3Api::class) // <-- Opt in to M3 experimental APIs used by TopAppBar/Scaffold
+// ---------------------------------------------------------
+// APP ROOT
+// ---------------------------------------------------------
 @Composable
 fun AutoInvoiceApp() {
     var screen by remember { mutableStateOf(Screen.HOME) }
-    var inv by remember { mutableStateOf(Invoice()) }
+    var invoice by remember { mutableStateOf(Invoice()) }
 
     MaterialTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice") }
+                    title = {
+                        Text(if (screen == Screen.HOME) "AutoInvoice" else "New Invoice")
+                    }
                 )
             }
-        ) { inner ->
-            Box(Modifier.padding(inner)) {
+        ) { innerPadding ->
+            Box(Modifier.padding(innerPadding)) {
                 when (screen) {
-                    Screen.HOME -> HomeScreen(onNew = { inv = Invoice(); screen = Screen.NEW })
-                    Screen.NEW  -> NewInvoiceScreen(invoice = inv, onUpdate = { inv = it }, onBack = { screen = Screen.HOME })
+                    Screen.HOME ->
+                        HomeScreen(
+                            onNew = {
+                                invoice = Invoice()
+                                screen = Screen.NEW
+                            }
+                        )
+
+                    Screen.NEW ->
+                        NewInvoiceScreen(
+                            invoice = invoice,
+                            onUpdate = { invoice = it },
+                            onBack = { screen = Screen.HOME }
+                        )
                 }
             }
         }
     }
 }
 
+// ---------------------------------------------------------
+// HOME SCREEN
+// ---------------------------------------------------------
 @Composable
 private fun HomeScreen(onNew: () -> Unit) {
     Column(
-        Modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        modifier = Modifier.fillMaxSize().padding(20.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Baker's Auto — Invoice App", style = MaterialTheme.typography.headlineSmall)
-        Button(onClick = onNew, modifier = Modifier.fillMaxWidth()) { Text("➕ New Invoice") }
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onNew, modifier = Modifier.fillMaxWidth()) {
+            Text("➕ New Invoice")
+        }
     }
 }
 
+// ---------------------------------------------------------
+// NEW INVOICE SCREEN
+// ---------------------------------------------------------
 @Composable
-private fun NewInvoiceScreen(invoice: Invoice, onUpdate: (Invoice) -> Unit, onBack: () -> Unit) {
-    fun update(block: Invoice.() -> Unit) {
+private fun NewInvoiceScreen(
+    invoice: Invoice,
+    onUpdate: (Invoice) -> Unit,
+    onBack: () -> Unit
+) {
+    fun modify(block: Invoice.() -> Unit) {
         val copy = invoice.copy(
             customer = invoice.customer.copy(),
             vehicle = invoice.vehicle.copy(),
             items = invoice.items.map { it.copy() }.toMutableList()
         )
-        copy.block(); onUpdate(copy)
+        copy.block()
+        onUpdate(copy)
     }
 
-    fun BigDecimal.money(): String = NumberFormat.getCurrencyInstance().format(this)
+    fun BigDecimal.money(): String =
+        NumberFormat.getCurrencyInstance().format(this)
 
-    val parts = remember(invoice) { invoice.items.fold(BigDecimal.ZERO) { a, li -> a + li.qty.multiply(li.unit).setScale(2, RoundingMode.HALF_UP) } }
-    val labor = remember(invoice) { invoice.laborHours.multiply(invoice.laborRate).setScale(2, RoundingMode.HALF_UP) }
-    val taxable = remember(parts, labor) { (parts + labor).setScale(2, RoundingMode.HALF_UP) }
-    val tax = remember(invoice, taxable) { taxable.multiply(invoice.taxPercent).divide(BigDecimal("100")).setScale(2, RoundingMode.HALF_UP) }
-    val grand = remember(taxable, tax) { (taxable + tax).setScale(2, RoundingMode.HALF_UP) }
+    // VALUES
+    val partsTotal = remember(invoice.items) {
+        invoice.items.fold(BigDecimal.ZERO) { total, item ->
+            total + (item.qty * item.unit).setScale(2, RoundingMode.HALF_UP)
+        }
+    }
 
-    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val laborTotal = remember(invoice.laborHours) {
+        (invoice.laborHours * invoice.laborRate).setScale(2, RoundingMode.HALF_UP)
+    }
+
+    // TAX ONLY ON PARTS
+    val taxAmount = remember(partsTotal) {
+        partsTotal
+            .multiply(invoice.taxPercentPartsOnly)
+            .divide(BigDecimal("100"))
+            .setScale(2, RoundingMode.HALF_UP)
+    }
+
+    val grandTotal = partsTotal + laborTotal + taxAmount + invoice.shopFee
+
+    LazyColumn(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+
+        // Header
         item {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text("Invoice # ${invoice.number}", style = MaterialTheme.typography.titleMedium)
                 OutlinedButton(onClick = onBack) { Text("Back") }
             }
         }
 
-        // Customer
+        // CUSTOMER SECTION
         item { Text("Customer", style = MaterialTheme.typography.titleMedium) }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(invoice.customer.name, { update { customer = customer.copy(name = it) } }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.customer.phone, { update { customer = customer.copy(phone = it) } }, label = { Text("Phone") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.customer.email, { update { customer = customer.copy(email = it) } }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = invoice.customer.name,
+                    onValueChange = { modify { customer = customer.copy(name = it) } },
+                    label = { Text("Name") }
+                )
+                OutlinedTextField(
+                    value = invoice.customer.phone,
+                    onValueChange = { modify { customer = customer.copy(phone = it) } },
+                    label = { Text("Phone") }
+                )
+                OutlinedTextField(
+                    value = invoice.customer.email,
+                    onValueChange = { modify { customer = customer.copy(email = it) } },
+                    label = { Text("Email") }
+                )
             }
         }
 
-        // Vehicle
+        // VEHICLE SECTION
         item { Text("Vehicle", style = MaterialTheme.typography.titleMedium) }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(invoice.vehicle.year,  { update { vehicle = vehicle.copy(year  = it) } }, label = { Text("Year")  }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.vehicle.make,  { update { vehicle = vehicle.copy(make  = it) } }, label = { Text("Make")  }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.vehicle.model, { update { vehicle = vehicle.copy(model = it) } }, label = { Text("Model") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(invoice.vehicle.vin,   { update { vehicle = vehicle.copy(vin   = it.uppercase(Locale.US)) } }, label = { Text("VIN")   }, modifier = Modifier.fillMaxWidth())
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = invoice.vehicle.year,
+                    onValueChange = { modify { vehicle = vehicle.copy(year = it) } },
+                    label = { Text("Year") }
+                )
+                OutlinedTextField(
+                    value = invoice.vehicle.make,
+                    onValueChange = { modify { vehicle = vehicle.copy(make = it) } },
+                    label = { Text("Make") }
+                )
+                OutlinedTextField(
+                    value = invoice.vehicle.model,
+                    onValueChange = { modify { vehicle = vehicle.copy(model = it) } },
+                    label = { Text("Model") }
+                )
+                OutlinedTextField(
+                    value = invoice.vehicle.vin,
+                    onValueChange = { modify { vehicle = vehicle.copy(vin = it.uppercase()) } },
+                    label = { Text("VIN") }
+                )
             }
         }
 
-        // Labor / rates
+        // LABOR SECTION
         item { Text("Labor", style = MaterialTheme.typography.titleMedium) }
         item {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                MoneyField("Rate/hr", invoice.laborRate) { v -> update { laborRate = v } }
-                DecimalField("Hours",  invoice.laborHours) { v -> update { laborHours = v } }
-                PercentField("Tax %",  invoice.taxPercent) { v -> update { taxPercent = v } }
+                OutlinedTextField(
+                    value = invoice.laborRate.toPlainString(),
+                    onValueChange = {},
+                    enabled = false,
+                    label = { Text("Rate/hr (Fixed)") }
+                )
+                DecimalField("Hours", invoice.laborHours) {
+                    modify { laborHours = it }
+                }
             }
         }
 
-        // Items
+        // PARTS / SERVICES
         item { Text("Parts / Services", style = MaterialTheme.typography.titleMedium) }
-        itemsIndexed(invoice.items) { idx, li ->
+
+        itemsIndexed(invoice.items) { index, item ->
             Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(li.description, { v -> update { items[idx] = items[idx].copy(description = v) } }, label = { Text("Description") }, modifier = Modifier.fillMaxWidth())
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        DecimalField("Qty",  li.qty)  { v -> update { items[idx] = items[idx].copy(qty  = v) } }
-                        MoneyField("Unit",   li.unit) { v -> update { items[idx] = items[idx].copy(unit = v) } }
-                        Text("Line: ${li.qty.multiply(li.unit).setScale(2, RoundingMode.HALF_UP).money()}")
+                Column(
+                    Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = item.description,
+                        onValueChange = { txt ->
+                            modify { items[index] = items[index].copy(description = txt) }
+                        },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        DecimalField("Qty", item.qty) { qty ->
+                            modify { items[index] = items[index].copy(qty = qty) }
+                        }
+
+                        MoneyField("Unit", item.unit) { unit ->
+                            modify { items[index] = items[index].copy(unit = unit) }
+                        }
+
+                        Text(
+                            "Line: ${(item.qty * item.unit).setScale(2, RoundingMode.HALF_UP).money()}",
+                            modifier = Modifier.weight(1f)
+                        )
                     }
+
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                        TextButton(onClick = { update { if (items.size > 1) items.removeAt(idx) } }) { Text("Remove") }
+                        TextButton(
+                            onClick = {
+                                modify {
+                                    if (items.size > 1) items.removeAt(index)
+                                }
+                            }
+                        ) { Text("Remove") }
                     }
                 }
             }
         }
-        item { OutlinedButton(onClick = { update { items.add(LineItem()) } }, modifier = Modifier.fillMaxWidth()) { Text("Add Line Item") } }
 
-        // Totals
+        // ADD ITEM BUTTON
+        item {
+            OutlinedButton(
+                onClick = { modify { items.add(LineItem()) } },
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Add Line Item") }
+        }
+
+        // SUMMARY CARD
         item {
             Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Text("Summary", style = MaterialTheme.typography.titleMedium)
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Parts"); Text(parts.money()) }
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Labor"); Text(labor.money()) }
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Tax (${invoice.taxPercent.stripTrailingZeros().toPlainString()}%)"); Text(tax.money()) }
+
+                    RowSummary("Parts", partsTotal.money())
+                    RowSummary("Labor", laborTotal.money())
+                    RowSummary("Tax (6% on Parts)", taxAmount.money())
+                    RowSummary("Shop Fee", invoice.shopFee.money())
+
                     Divider()
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Grand Total"); Text(grand.money()) }
+
+                    RowSummary("Grand Total", grandTotal.money())
                 }
             }
         }
+
         item { Spacer(Modifier.height(48.dp)) }
     }
 }
 
+// ---------------------------------------------------------
+// REUSABLE ROW FOR SUMMARY
+// ---------------------------------------------------------
 @Composable
-private fun DecimalField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
-    var t by remember(value) { mutableStateOf(value.stripTrailingZeros().toPlainString()) }
+private fun RowSummary(label: String, value: String) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label)
+        Text(value)
+    }
+}
+
+// ---------------------------------------------------------
+// FIELD COMPOSABLES
+// ---------------------------------------------------------
+@Composable
+private fun DecimalField(
+    label: String,
+    value: BigDecimal,
+    onChange: (BigDecimal) -> Unit
+) {
+    var text by remember(value) {
+        mutableStateOf(value.stripTrailingZeros().toPlainString())
+    }
+
     OutlinedTextField(
-        value = t,
-        onValueChange = { t = it; it.toBigDecimalOrNull()?.let(onChange) },
+        value = text,
+        onValueChange = {
+            text = it
+            it.toBigDecimalOrNull()?.let(onChange)
+        },
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth()
     )
 }
 
 @Composable
-private fun MoneyField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
-    var t by remember(value) { mutableStateOf(value.setScale(2, RoundingMode.HALF_UP).toPlainString()) }
-    OutlinedTextField(
-        value = t,
-        onValueChange = { t = it; it.toBigDecimalOrNull()?.setScale(2, RoundingMode.HALF_UP)?.let(onChange) },
-        label = { Text(label) },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
+private fun MoneyField(
+    label: String,
+    value: BigDecimal,
+    onChange: (BigDecimal) -> Unit
+) {
+    var text by remember(value) {
+        mutableStateOf(value.setScale(2, RoundingMode.HALF_UP).toPlainString())
+    }
 
-@Composable
-private fun PercentField(label: String, value: BigDecimal, onChange: (BigDecimal) -> Unit) {
-    var t by remember(value) { mutableStateOf(value.stripTrailingZeros().toPlainString()) }
     OutlinedTextField(
-        value = t,
-        onValueChange = { t = it; it.toBigDecimalOrNull()?.let(onChange) },
+        value = text,
+        onValueChange = {
+            text = it
+            it.toBigDecimalOrNull()?.setScale(2, RoundingMode.HALF_UP)?.let(onChange)
+        },
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth()
     )
