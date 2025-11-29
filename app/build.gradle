@@ -20,10 +20,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles(
-                    getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro'
-            )
+            proguardFiles getDefaultProguardFile(
+                'proguard-android-optimize.txt'
+            ), 'proguard-rules.pro'
         }
     }
 
@@ -37,16 +36,14 @@ android {
     }
 
     buildFeatures {
-        compose = true
+        compose true
     }
 
     composeOptions {
-        // Works with Kotlin 1.9.25 + Compose BOM 2024.10.00
         kotlinCompilerExtensionVersion "1.5.14"
     }
 
-    // Newer AGP style for packaging options
-    packaging {
+    packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -54,7 +51,8 @@ android {
 }
 
 dependencies {
-    // Compose BOM – keeps all Compose libs in sync
+
+    // Compose BOM
     implementation platform("androidx.compose:compose-bom:2024.10.00")
 
     // Compose UI
@@ -67,16 +65,15 @@ dependencies {
     // Activity Compose
     implementation "androidx.activity:activity-compose:1.9.3"
 
-    // Debug tooling
+    // Debug tools
     debugImplementation "androidx.compose.ui:ui-tooling"
     debugImplementation "androidx.compose.ui:ui-test-manifest"
 
-    // Instrumented + Compose tests
+    // Tests
     androidTestImplementation platform("androidx.compose:compose-bom:2024.10.00")
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
     androidTestImplementation "androidx.test.ext:junit:1.2.1"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
 
-    // Unit tests
     testImplementation "junit:junit:4.13.2"
 }
